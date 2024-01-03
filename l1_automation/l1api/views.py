@@ -11,47 +11,47 @@ from django.views.decorators.csrf import csrf_exempt
 import json
 import cx_Oracle
 
-# @api_view(['GET'])
-# def func1(request):
-    # model = error_code.objects.all()
-    # serializer = error_code_serializer(model,many=True)
-    # return serializer.data
+@api_view(['GET'])
+def func1(request):
+    model = error_code.objects.all()
+    serializer = error_code_serializer(model,many=True)
+    return serializer.data
 
 # Create your views here.
 
-class ResumeQueryAPIView(View):
-    @method_decorator(csrf_exempt)
-    def dispatch(self, *args, **kwargs):
-        return super().dispatch(*args, **kwargs)
+# class ResumeQueryAPIView(View):
+#     @method_decorator(csrf_exempt)
+#     def dispatch(self, *args, **kwargs):
+#         return super().dispatch(*args, **kwargs)
 
-    def post(self, request, *args, **kwargs):
-        try:
-            models = error_code.objects.all()
-            results = {}
+#     def post(self, request, *args, **kwargs):
+#         try:
+#             models = error_code.objects.all()
+#             results = {}
 
-            for model in models:
-                check_list = model.check_list
+#             for model in models:
+#                 check_list = model.check_list
 
-                if isinstance(check_list, dict):
-                    query_results = {}
+#                 if isinstance(check_list, dict):
+#                     query_results = {}
 
-                    for query_key, query_values in check_list.items():
-                        if isinstance(query_values, list) and query_values:
-                            sql_query = " ".join(query_values)
+#                     for query_key, query_values in check_list.items():
+#                         if isinstance(query_values, list) and query_values:
+#                             sql_query = " ".join(query_values)
 
-                            try:
-                                with connection.cursor() as cursor:
-                                    cursor.execute(sql_query)
-                                    columns = [col[0] for col in cursor.description]
-                                    query_results[query_key] = [dict(zip(columns, row)) for row in cursor.fetchall()]
+#                             try:
+#                                 with connection.cursor() as cursor:
+#                                     cursor.execute(sql_query)
+#                                     columns = [col[0] for col in cursor.description]
+#                                     query_results[query_key] = [dict(zip(columns, row)) for row in cursor.fetchall()]
 
-                            except cx_Oracle.DatabaseError as e:
-                                error, = e.args
-                                query_results[query_key] = {'error': f'Error executing SQL query: {error.message}'}
+#                             except cx_Oracle.DatabaseError as e:
+#                                 error, = e.args
+#                                 query_results[query_key] = {'error': f'Error executing SQL query: {error.message}'}
 
-                    results[model.id] = query_results
+#                     results[model.id] = query_results
 
-        except json.JSONDecodeError:
-            return JsonResponse({'message': 'Invalid JSON data'})
+#         except json.JSONDecodeError:
+#             return JsonResponse({'message': 'Invalid JSON data'})
 
-        return JsonResponse({'data': results})
+#         return JsonResponse({'data': results})
